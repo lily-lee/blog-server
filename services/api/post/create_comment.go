@@ -14,7 +14,7 @@ import (
 )
 
 type CreateCommentParam struct {
-	PostID    uint64 `uri:"id"`
+	PostID    uint64 `uri:"id" json:"-"`
 	PID       uint64 `json:"pid"`
 	Content   string `json:"content" binding:"required"`
 	Anonymous bool   `json:"anonymous"`
@@ -41,16 +41,23 @@ func (param *CreateCommentParam) Do(c *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	comment.UserID = user.ID
+	cid, err := config.SnowFlake.NextID()
+	if err != nil {
+		logrus.Error("comment get snowflake failed.err:", err)
+	}
 
+	if cid > 0 {
+		comment.ID = cid
+	}
+
+	comment.UserID = user.ID
 	err = db.Create(comment).Error
+	if err != nil {
+		return nil, err
+	}
 
 	if param.Anonymous {
 		comment.UserID = 0
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	SaveNum(CommentKey(param.PostID), true, param.PostID, GetCommentNum)

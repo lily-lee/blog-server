@@ -15,7 +15,7 @@ import (
 
 type (
 	LikePostParam struct {
-		PostID uint64 `uri:"id"`
+		PostID uint64 `uri:"id" json:"-"`
 	}
 
 	LikeResp struct {

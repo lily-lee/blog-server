@@ -2,6 +2,9 @@ package draft
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/jinzhu/copier"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -14,7 +17,7 @@ import (
 )
 
 type PostParam struct {
-	ID uint64 `uri:"id"`
+	ID uint64 `uri:"id" json:"-"`
 }
 
 func (param *PostParam) Do(c *gin.Context) (interface{}, error) {
@@ -37,17 +40,13 @@ func (param *PostParam) Do(c *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	post := &models.Post{
-		ID:       draft.PostID,
-		DraftID:  draft.ID,
-		VolumeID: draft.VolumeID,
-		UserID:   user.ID,
-		Title:    draft.Title,
-		Content:  draft.Content,
-		Digest:   draft.Digest,
-		CoverURL: draft.CoverURL,
-		Tag:      draft.Tag,
-	}
+	post := new(models.Post)
+	_ = copier.Copy(post, draft)
+	post.DraftID = draft.ID
+	post.ID = draft.PostID
+	post.UserID = user.ID
+	post.UpdatedAt = time.Time{}
+	post.CreatedAt = time.Time{}
 
 	postId := draft.PostID
 

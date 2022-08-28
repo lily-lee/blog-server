@@ -2,7 +2,7 @@ package request
 
 type BizErr struct {
 	HttpCode int    `json:"-"`
-	ErrCode  int    `json:"err_code,omitempty"`
+	ErrCode  int    `json:"-"`
 	ErrMsg   string `json:"err_msg"`
 }
 

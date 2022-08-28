@@ -14,7 +14,7 @@ type Draft struct {
 	VolumeID  uint64    `json:"volume_id"`
 	UserID    uint64    `json:"user_id"`
 	Title     string    `json:"title"`
-	Content   string    `json:"content"`
+	Content   string    `json:"content,omitempty"`
 	Digest    string    `json:"digest"`
 	CoverURL  string    `json:"cover_url"`
 	Tag       types.Tag `json:"tag"`

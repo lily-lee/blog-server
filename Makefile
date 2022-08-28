@@ -1,4 +1,4 @@
-.PHONY: build test run
+.PHONY: build test run migrate rollback
 
 build:
 	go build .
@@ -14,3 +14,9 @@ arg ?=blog
 run:
 	@echo $(ENV)
 	go run main.go $(arg)
+
+migrate:
+	go run main.go migrate
+
+rollback:
+	go run main.go rollback

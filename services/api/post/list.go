@@ -54,7 +54,7 @@ func (param *ListParam) Do(c *gin.Context) (interface{}, error) {
 	_ = where.Count(&count).Error
 
 	posts := make([]models.Post, 0)
-	err := where.Limit(param.PerPage).Offset((param.Page - 1) * param.PerPage).Find(&posts).Error
+	err := where.Limit(param.PerPage).Offset((param.Page - 1) * param.PerPage).Order("id DESC").Find(&posts).Error
 
 	resp := ListResp{
 		Page:    param.Page,

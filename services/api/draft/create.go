@@ -2,12 +2,12 @@ package draft
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-
+	"github.com/jinzhu/copier"
 	"github.com/lily-lee/blog-server/config"
 	"github.com/lily-lee/blog-server/models"
 	"github.com/lily-lee/blog-server/services/jwttoken"
 	"github.com/lily-lee/blog-server/services/types"
+	"github.com/sirupsen/logrus"
 )
 
 type CreateParam struct {
@@ -31,13 +31,10 @@ func (param *CreateParam) Do(c *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	draft := &models.Draft{
-		ID:       draftId,
-		UserID:   user.ID,
-		VolumeID: param.VolumeID,
-		Title:    param.Title,
-		Content:  param.Content,
-	}
+	draft := new(models.Draft)
+	_ = copier.Copy(draft, param)
+	draft.ID = draftId
+	draft.UserID = user.ID
 
 	db := config.DB
 	err = db.Create(draft).Error

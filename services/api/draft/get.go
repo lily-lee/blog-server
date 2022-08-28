@@ -12,7 +12,7 @@ import (
 )
 
 type GetParam struct {
-	ID uint64 `uri:"id"`
+	ID uint64 `uri:"id" json:"-"`
 }
 
 func (param *GetParam) Do(c *gin.Context) (interface{}, error) {

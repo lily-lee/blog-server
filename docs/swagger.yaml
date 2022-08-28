@@ -1,0 +1,728 @@
+basePath: /
+definitions:
+  draft.CreateParam:
+    properties:
+      content:
+        type: string
+      cover_url:
+        type: string
+      digest:
+        type: string
+      tag:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      volume_id:
+        type: integer
+    required:
+    - content
+    - title
+    type: object
+  draft.EditParam:
+    properties:
+      content:
+        type: string
+      cover_url:
+        type: string
+      digest:
+        type: string
+      tag:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      volume_id:
+        type: integer
+    required:
+    - content
+    - title
+    type: object
+  draft.ListResp:
+    properties:
+      count:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/models.Draft'
+        type: array
+      page:
+        type: integer
+      per_page:
+        type: integer
+    type: object
+  jwttoken.Token:
+    properties:
+      expires_at:
+        type: integer
+      issued_at:
+        type: integer
+      signature:
+        type: string
+    type: object
+  models.Comment:
+    properties:
+      anonymous:
+        type: boolean
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      pid:
+        type: integer
+      post_id:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Draft:
+    properties:
+      content:
+        type: string
+      cover_url:
+        type: string
+      created_at:
+        type: string
+      digest:
+        type: string
+      id:
+        type: integer
+      post_id:
+        type: integer
+      posted:
+        type: boolean
+      tag:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+      volume_id:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      avatar:
+        type: string
+      birthday:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  post.CreateCommentParam:
+    properties:
+      anonymous:
+        type: boolean
+      content:
+        type: string
+      pid:
+        type: integer
+    required:
+    - content
+    type: object
+  post.LikeResp:
+    properties:
+      like:
+        type: boolean
+      post_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  post.ListResp:
+    properties:
+      count:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/post.Post'
+        type: array
+      page:
+        type: integer
+      per_page:
+        type: integer
+    type: object
+  post.Post:
+    properties:
+      comment_count:
+        type: integer
+      content:
+        type: string
+      cover_url:
+        type: string
+      created_at:
+        type: string
+      digest:
+        type: string
+      draft_id:
+        type: integer
+      id:
+        type: integer
+      like_count:
+        type: integer
+      liked:
+        type: boolean
+      tag:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+      volume_id:
+        type: integer
+    type: object
+  request.BizErr:
+    properties:
+      err_msg:
+        type: string
+    type: object
+  user.LoginParam:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.RegisterParam:
+    properties:
+      avatar:
+        type: string
+      birthday:
+        type: string
+      email:
+        type: string
+      gender:
+        type: integer
+      mobile:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  user.RegisterResp:
+    properties:
+      token:
+        $ref: '#/definitions/jwttoken.Token'
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: lilylee99.01@gmail.com
+    name: lily-lee
+  description: This is a blog api server, serves api for blog web frontend.
+  title: blog api server
+  version: "1.0"
+paths:
+  /api/drafts:
+    get:
+      consumes:
+      - application/json
+      description: list drafts
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: perPage
+        type: integer
+      - in: query
+        name: volumeID
+        type: integer
+      - description: login token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/draft.ListResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: list drafts
+      tags:
+      - drafts
+    post:
+      consumes:
+      - application/json
+      description: create a draft article
+      parameters:
+      - description: create param
+        in: body
+        name: draft
+        required: true
+        schema:
+          $ref: '#/definitions/draft.CreateParam'
+      - description: login token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Draft'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: create a draft article
+      tags:
+      - drafts
+  /api/drafts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get a specific article
+      parameters:
+      - description: draft id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: login token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Draft'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: get a specific article
+      tags:
+      - drafts
+    put:
+      consumes:
+      - application/json
+      description: edit an article
+      parameters:
+      - description: draft id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: create param
+        in: body
+        name: draft
+        required: true
+        schema:
+          $ref: '#/definitions/draft.EditParam'
+      - description: login token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Draft'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: edit an article
+      tags:
+      - drafts
+  /api/drafts/{id}/posts:
+    post:
+      consumes:
+      - application/json
+      description: edit an article
+      parameters:
+      - description: draft id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: login token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Draft'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: edit an article
+      tags:
+      - drafts
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: user login
+      parameters:
+      - description: user login param
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/user.LoginParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.RegisterResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: user login
+      tags:
+      - users
+  /api/posts:
+    get:
+      consumes:
+      - application/json
+      description: list posts
+      parameters:
+      - in: query
+        name: keyword
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: perPage
+        type: integer
+      - in: query
+        name: userID
+        type: integer
+      - in: query
+        name: volumeID
+        type: integer
+      - description: login token
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.ListResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: list posts
+      tags:
+      - posts
+  /api/posts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: return one post
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: login token
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.Post'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: get a specific post
+      tags:
+      - posts
+  /api/posts/{id}/comments:
+    post:
+      consumes:
+      - application/json
+      description: comment a post
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: create comment param
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/post.CreateCommentParam'
+      - description: login token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Comment'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: comment a post
+      tags:
+      - posts
+  /api/posts/{id}/like:
+    post:
+      consumes:
+      - application/json
+      description: When you request this api if you had like a post, then you'll unlike
+        the post.
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: login token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.LikeResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: like or dislike post.
+      tags:
+      - posts
+  /api/registration:
+    post:
+      consumes:
+      - application/json
+      description: register a user
+      parameters:
+      - description: user register param
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/user.RegisterParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.RegisterResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/request.BizErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/request.BizErr'
+      summary: user register
+      tags:
+      - users
+swagger: "2.0"

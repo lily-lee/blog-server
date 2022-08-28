@@ -5,16 +5,24 @@ import (
 	"log"
 	"os"
 
-	"github.com/urfave/cli/v2"
-
 	"github.com/lily-lee/blog-server/cmd"
 	"github.com/lily-lee/blog-server/config"
+	"github.com/urfave/cli/v2"
 )
 
 func init() {
 	config.Init()
 }
 
+// @title       blog api server
+// @version     1.0
+// @description This is a blog api server, serves api for blog web frontend.
+
+// @contact.name  lily-lee
+// @contact.email lilylee99.01@gmail.com
+
+// @host     localhost:3000
+// @BasePath /
 func main() {
 	app := &cli.App{
 		Commands: []*cli.Command{

@@ -13,7 +13,7 @@ import (
 )
 
 type EditParam struct {
-	ID       uint64    `uri:"id"`
+	ID       uint64    `uri:"id" json:"-"`
 	VolumeID uint64    `json:"volume_id"`
 	Title    string    `json:"title" binding:"required"`
 	Content  string    `json:"content" binding:"required"`
@@ -46,6 +46,9 @@ func (param *EditParam) Do(c *gin.Context) (interface{}, error) {
 		VolumeID: param.VolumeID,
 		Title:    param.Title,
 		Content:  param.Content,
+		Digest:   param.Digest,
+		CoverURL: param.CoverURL,
+		Tag:      param.Tag,
 	}).Error
 	if err != nil {
 		return nil, err
