@@ -19,7 +19,13 @@ type (
 		Page    int    `json:"page"`
 		PerPage int    `json:"per_page"`
 		Count   int64  `json:"count"`
-		Data    []Post `json:"data"`
+		Data    []Item `json:"data"`
+	}
+
+	Item struct {
+		models.Post
+		LikeCount    int64 `json:"like_count"`
+		CommentCount int64 `json:"comment_count"`
 	}
 )
 
@@ -60,7 +66,7 @@ func (param *ListParam) Do(c *gin.Context) (interface{}, error) {
 		Page:    param.Page,
 		PerPage: param.PerPage,
 		Count:   count,
-		Data:    make([]Post, len(posts)),
+		Data:    make([]Item, len(posts)),
 	}
 
 	for i := range posts {
